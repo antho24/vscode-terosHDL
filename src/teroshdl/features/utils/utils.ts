@@ -220,3 +220,7 @@ export function getVSCodeWorkspaceStorage(context: vscode.ExtensionContext): str
     }
     return terosHdlPath;
 }
+
+export function getVSCodeWorkspaceProjectListPath(context: vscode.ExtensionContext, filename: string): string {
+    return path_lib.join(getVSCodeWorkspaceStorage(context), filename);
+}

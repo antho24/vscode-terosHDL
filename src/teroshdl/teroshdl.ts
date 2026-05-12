@@ -46,7 +46,7 @@ import { ProjectEmitter } from 'colibri/project_manager/projectEmitter';
 import { get_home_directory } from 'colibri/process/utils';
 import { GlobalConfigManager } from 'colibri/config/config_manager';
 import { configCheckerManager } from './features/configChecker/manager';
-import { getVSCodeWorkspaceStorage } from './features/utils/utils';
+import { getVSCodeWorkspaceProjectListPath, getVSCodeWorkspaceStorage } from './features/utils/utils';
 
 const CONFIG_FILENAME = '.teroshdl2_config.json';
 const PRJ_FILENAME = '.teroshdl2_prj.json';
@@ -69,7 +69,7 @@ export class Teroshdl {
         
         const homedir = get_home_directory();
         const file_config_path = path_lib.join(homedir, CONFIG_FILENAME);
-        const file_prj_path = path_lib.join(homedir, PRJ_FILENAME);
+        const file_prj_path = getVSCodeWorkspaceProjectListPath(context, PRJ_FILENAME);
 
         this.manager = new Multi_project_manager(this.emitterProject, file_prj_path);
 
@@ -218,4 +218,3 @@ export class Teroshdl {
         await this.languageProviderManager.deactivate();
     }
 }
-
