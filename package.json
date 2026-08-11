@@ -181,10 +181,18 @@
         ],
         "menus": {
             "editor/context": [
-
+                {
+                    "when": "resourceScheme == file",
+                    "command": "teroshdl.view.source.add_file_to_project",
+                    "group": "teroshdl@1"
+                }
             ],
             "explorer/context": [
-
+                {
+                    "when": "resourceScheme == file && !explorerResourceIsFolder",
+                    "command": "teroshdl.view.source.add_file_to_project",
+                    "group": "teroshdl@1"
+                },
                 {
                     "when": "resourceLangId == gtkw_wavebin || resourceLangId == gtkw_waveconfig || resourceLangId == vcd",
 
@@ -497,6 +505,14 @@
                     "dark": "resources/icon/dark/add.svg"
                 },
                 "title": "Add"
+            }, 
+            {
+                "command": "teroshdl.view.source.add_file_to_project",
+                "icon": {
+                    "light": "resources/icon/light/add.svg",
+                    "dark": "resources/icon/dark/add.svg"
+                },
+                "title": "TerosHDL: Add File to Current Project"
             }, 
             {
                 "command": "teroshdl.view.source.add_source_to_library",

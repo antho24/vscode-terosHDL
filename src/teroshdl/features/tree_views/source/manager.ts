@@ -61,6 +61,11 @@ export class Source_manager extends BaseView {
         vscode.commands.registerCommand('teroshdl.view.source.save_project', () => this.save_project());
         vscode.commands.registerCommand('teroshdl.view.source.select_toplevel', (item) => this.select_top(item));
         vscode.commands.registerCommand('teroshdl.view.source.add', async () => await this.add());
+        vscode.commands.registerCommand(
+            'teroshdl.view.source.add_file_to_project',
+            async (resource?: vscode.Uri, selectedResources?: vscode.Uri[]) =>
+                await this.add_file_to_project(resource, selectedResources)
+        );
         vscode.commands.registerCommand('teroshdl.view.source.add_source_to_library', (item) =>
             this.add_source_to_library(item)
         );
@@ -167,6 +172,33 @@ export class Source_manager extends BaseView {
                 }
             }
         } catch (error) {}
+    }
+
+    /** Add files selected in the Explorer, or the file in the active editor, to the selected project. */
+    async add_file_to_project(resource?: vscode.Uri, selectedResources?: vscode.Uri[]) {
+        try {
+            const prj = this.project_manager.get_selected_project();
+            const resources = selectedResources?.length
+                ? selectedResources
+                : resource
+                    ? [resource]
+                    : vscode.window.activeTextEditor
+                        ? [vscode.window.activeTextEditor.document.uri]
+                        : [];
+
+            const filePaths = [...new Set(resources.filter(uri => uri.scheme === 'file').map(uri => uri.fsPath))];
+            if (filePaths.length === 0) {
+                vscode.window.showErrorMessage('No local file is selected to add to the TerosHDL project.');
+                return;
+            }
+
+            await utils.add_sources_from_paths(prj, filePaths, '');
+            const fileLabel = filePaths.length === 1 ? path_lib.basename(filePaths[0]) : `${filePaths.length} files`;
+            vscode.window.showInformationMessage(`Added ${fileLabel} to the current TerosHDL project.`);
+        } catch (error) {
+            const message = error instanceof Error ? error.message : String(error);
+            vscode.window.showErrorMessage(`Could not add file to the TerosHDL project: ${message}`);
+        }
     }
 
     async add_source_to_library(item: element.Source_tree_element) {
