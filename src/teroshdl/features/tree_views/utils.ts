@@ -103,6 +103,10 @@ export async function add_sources_from_open_dialog(prj: Project_manager, logical
     const source_path_list = await get_from_open_dialog("Add sources", false, true, true,
         "Select source file", { 'All files (*.*)': ['*'] });
 
+    await add_sources_from_paths(prj, source_path_list, logical_name);
+}
+
+export async function add_sources_from_paths(prj: Project_manager, source_path_list: string[], logical_name: string) {
     const fileDefinitionList: t_file[] = [];
     for (const source_path of source_path_list) {
         const f: t_file = {
