@@ -144,31 +144,49 @@ export function forceRefresh(rustHDLFilePath: string, veribleLSFilePath: string)
     }
 
     try {
-        const hdlVersion = utils.getConfig(multi_manager).linter.vhdlls.standard.replace('v', '');
-
-        const ignoreVunit = utils.getConfig(multi_manager).linter.vhdlls.ignoreVunit;
-        const vunitPath = utils.getConfig(multi_manager).linter.vhdlls.vunitPath;
-
-        const oldPathList = [
-            path_lib.join(os.homedir(), '.vhdl_ls.toml'),
-            path_lib.join(os.homedir(), '.verible-teroshdl.filelist')
-        ];
-
-        for (const oldPath of oldPathList) {
-            if (file_utils.check_if_path_exist(oldPath)) {
-                file_utils.remove_file(oldPath);
-            }
-        }
-
-        multi_manager.get_selected_project().save_toml(rustHDLFilePath, hdlVersion, ignoreVunit, vunitPath);
-
-        multi_manager
-            .get_selected_project()
-            .saveFileList(veribleLSFilePath, hdlVersion, ignoreVunit, vunitPath);
+        writeLanguageServerProjectFiles(multi_manager, rustHDLFilePath, veribleLSFilePath);
 
         vscode.commands.executeCommand('teroshdl.vhdlls.restart');
         vscode.commands.executeCommand('teroshdl.verible.restart');
     } catch (error) {
         return;
+    }
+}
+
+/**
+ * Generate project files before the language servers start, or when the selected project changes.
+ */
+export function writeLanguageServerProjectFiles(
+    manager: Multi_project_manager,
+    rustHDLFilePath: string,
+    veribleLSFilePath: string
+): void {
+    const config = utils.getConfig(manager);
+    const hdlVersion = config.linter.vhdlls.standard.replace('v', '');
+    const ignoreVunit = config.linter.vhdlls.ignoreVunit;
+    const vunitPath = config.linter.vhdlls.vunitPath;
+
+    const oldPathList = [
+        path_lib.join(os.homedir(), '.vhdl_ls.toml'),
+        path_lib.join(os.homedir(), '.verible-teroshdl.filelist')
+    ];
+
+    for (const oldPath of oldPathList) {
+        if (file_utils.check_if_path_exist(oldPath)) {
+            file_utils.remove_file(oldPath);
+        }
+    }
+
+    try {
+        const selectedProject = manager.get_selected_project();
+        selectedProject.save_toml(rustHDLFilePath, hdlVersion, ignoreVunit, vunitPath);
+        selectedProject.saveFileList(veribleLSFilePath, hdlVersion, ignoreVunit, vunitPath);
+    } catch (error) {
+        // VHDL-LS expects TOML even when this workspace does not yet have a selected project.
+        file_utils.save_file_sync(
+            rustHDLFilePath,
+            `standard = "${hdlVersion}"\n[libraries]\n\nwork.files = []\n`
+        );
+        file_utils.save_file_sync(veribleLSFilePath, '');
     }
 }
