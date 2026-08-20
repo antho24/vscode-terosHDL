@@ -631,7 +631,16 @@ export class Project_manager extends ConfigManager {
         file_utils.save_file_sync(output_path, edam_yaml);
     }
 
-    public save_toml(output_path: string, hdlVersion: string, ignoreVunit: boolean, vunitPath: string) {
+    public save_toml(
+        output_path: string,
+        hdlVersion: string,
+        ignoreVunit: boolean,
+        vunitPath: string,
+        ignoreUnisim: boolean,
+        unisimPath: string,
+        ignoreXpm: boolean,
+        xpmPath: string
+    ) {
         let initString = `standard = "${hdlVersion}"\n`;
 
         let endString = "\n\n";
@@ -640,6 +649,18 @@ export class Project_manager extends ConfigManager {
         }
         if (ignoreVunit && vunitPath !== "") {
             endString += "vunit_lib.is_third_party = true\n";
+        }
+        if (unisimPath !== "") {
+            endString += `unisim.files = ['${unisimPath}']\n`;
+        }
+        if (ignoreUnisim && unisimPath !== "") {
+            endString += "unisim.is_third_party = true\n";
+        }
+        if (xpmPath !== "") {
+            endString += `xpm.files = ['${xpmPath}']\n`;
+        }
+        if (ignoreXpm && xpmPath !== "") {
+            endString += "xpm.is_third_party = true\n";
         }
 
         const toml_text = initString + this.get_toml() + endString;
