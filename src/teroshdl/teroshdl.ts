@@ -34,7 +34,11 @@ import { Completions_manager } from './features/completions/completions';
 import { Number_hover_manager } from './features/number_hover';
 import { Stutter_mode_manager } from './features/stutter_mode';
 import { Config_manager } from './features/config';
-import { Tree_view_manager, forceRefresh } from './features/tree_views/manager';
+import {
+    Tree_view_manager,
+    forceRefresh,
+    writeLanguageServerProjectFiles
+} from './features/tree_views/manager';
 import { Comander } from './features/comander/run';
 import { Dependency_manager } from './features/dependency';
 import { ConfigurationFileWebview } from './features/views/configurationFile';
@@ -82,6 +86,8 @@ export class Teroshdl {
 
     public async init_teroshdl() {
         await this.init_multi_project_manager();
+
+        writeLanguageServerProjectFiles(this.manager, this.rustHDLFilePath, this.veribleLSFilePath);
 
         await this.init_language_provider();
         debugLogger.info('activated language provider');
