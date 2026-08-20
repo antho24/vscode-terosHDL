@@ -118,7 +118,8 @@ export class Tree_view_manager {
             e_event.STDOUT_INFO,
             e_event.STDOUT_WARNING,
             e_event.STDOUT_ERROR,
-            e_event.ADD_PROJECT
+            e_event.ADD_PROJECT,
+            e_event.GLOBAL_REFRESH
         ];
 
         const allowedRefreshEventList = [e_event.SELECT_PROJECT, e_event.SAVE_SETTINGS];
@@ -165,6 +166,10 @@ export function writeLanguageServerProjectFiles(
     const hdlVersion = config.linter.vhdlls.standard.replace('v', '');
     const ignoreVunit = config.linter.vhdlls.ignoreVunit;
     const vunitPath = config.linter.vhdlls.vunitPath;
+    const ignoreUnisim = config.linter.vhdlls.ignoreUnisim;
+    const unisimPath = config.linter.vhdlls.unisimPath;
+    const ignoreXpm = config.linter.vhdlls.ignoreXpm;
+    const xpmPath = config.linter.vhdlls.xpmPath;
 
     const oldPathList = [
         path_lib.join(os.homedir(), '.vhdl_ls.toml'),
@@ -179,7 +184,16 @@ export function writeLanguageServerProjectFiles(
 
     try {
         const selectedProject = manager.get_selected_project();
-        selectedProject.save_toml(rustHDLFilePath, hdlVersion, ignoreVunit, vunitPath);
+        selectedProject.save_toml(
+            rustHDLFilePath,
+            hdlVersion,
+            ignoreVunit,
+            vunitPath,
+            ignoreUnisim,
+            unisimPath,
+            ignoreXpm,
+            xpmPath
+        );
         selectedProject.saveFileList(veribleLSFilePath, hdlVersion, ignoreVunit, vunitPath);
     } catch (error) {
         // VHDL-LS expects TOML even when this workspace does not yet have a selected project.

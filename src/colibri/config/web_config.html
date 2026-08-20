@@ -1654,6 +1654,46 @@ body.vscode-high-contrast {
                     </div>
                   
                   
+                    <div class="setting-item">
+                        <div class="setting-checkbox">
+                            <input type="checkbox" id="linter-vhdlls-ignoreUnisim">
+                            <label class="setting-checkbox-label" for="linter-vhdlls-ignoreUnisim">
+                                Mark the UNISIM library as third-party so diagnostics in the library sources are ignored.
+                                <span class="markConfig" id="mark_linter-vhdlls-ignoreUnisim"></span>
+                            </label>
+                        </div>
+                    </div>
+
+
+                    <div class="setting-item">
+                        <div class="setting-item-label">
+                            Path glob to the Vivado UNISIM VHDL files. Example: '/tools/Xilinx/Vivado/2025.1/data/vhdl/src/unisims/**/*.vhd'
+                            <span class="markConfig" id="mark_linter-vhdlls-unisimPath"></span>
+                        </div>
+                            <input class="setting-input-box" id="linter-vhdlls-unisimPath" value="">
+                    </div>
+
+
+                    <div class="setting-item">
+                        <div class="setting-checkbox">
+                            <input type="checkbox" id="linter-vhdlls-ignoreXpm">
+                            <label class="setting-checkbox-label" for="linter-vhdlls-ignoreXpm">
+                                Mark the XPM library as third-party so diagnostics in the library sources are ignored.
+                                <span class="markConfig" id="mark_linter-vhdlls-ignoreXpm"></span>
+                            </label>
+                        </div>
+                    </div>
+
+
+                    <div class="setting-item">
+                        <div class="setting-item-label">
+                            Path glob to the Vivado XPM VHDL files. Example: '/tools/Xilinx/Vivado/2025.1/data/ip/xpm/**/*.vhd'
+                            <span class="markConfig" id="mark_linter-vhdlls-xpmPath"></span>
+                        </div>
+                            <input class="setting-input-box" id="linter-vhdlls-xpmPath" value="">
+                    </div>
+
+
                   
             </div>
             <div class="settings-section" id="linter-ghdl">
@@ -5905,6 +5945,14 @@ body.vscode-high-contrast {
     config["linter"]["vhdlls"]["ignoreVunit"] = element_value
     element_value = document.getElementById("linter-vhdlls-vunitPath").value;
     config["linter"]["vhdlls"]["vunitPath"] = element_value
+    element_value = document.getElementById("linter-vhdlls-ignoreUnisim").checked;
+    config["linter"]["vhdlls"]["ignoreUnisim"] = element_value
+    element_value = document.getElementById("linter-vhdlls-unisimPath").value;
+    config["linter"]["vhdlls"]["unisimPath"] = element_value
+    element_value = document.getElementById("linter-vhdlls-ignoreXpm").checked;
+    config["linter"]["vhdlls"]["ignoreXpm"] = element_value
+    element_value = document.getElementById("linter-vhdlls-xpmPath").value;
+    config["linter"]["vhdlls"]["xpmPath"] = element_value
     config["linter"]["ghdl"] = {}
     element_value = document.getElementById("linter-ghdl-arguments").value;
     config["linter"]["ghdl"]["arguments"] = element_value
@@ -6906,6 +6954,18 @@ body.vscode-high-contrast {
     }
     if (config["linter"] && config["linter"]["vhdlls"] && config["linter"]["vhdlls"]["vunitPath"] !== undefined) {
         document.getElementById("linter-vhdlls-vunitPath").value = config["linter"]["vhdlls"]["vunitPath"];
+    }
+    if (config["linter"] && config["linter"]["vhdlls"] && config["linter"]["vhdlls"]["ignoreUnisim"] !== undefined) {
+        document.getElementById("linter-vhdlls-ignoreUnisim").checked = config["linter"]["vhdlls"]["ignoreUnisim"];
+    }
+    if (config["linter"] && config["linter"]["vhdlls"] && config["linter"]["vhdlls"]["unisimPath"] !== undefined) {
+        document.getElementById("linter-vhdlls-unisimPath").value = config["linter"]["vhdlls"]["unisimPath"];
+    }
+    if (config["linter"] && config["linter"]["vhdlls"] && config["linter"]["vhdlls"]["ignoreXpm"] !== undefined) {
+        document.getElementById("linter-vhdlls-ignoreXpm").checked = config["linter"]["vhdlls"]["ignoreXpm"];
+    }
+    if (config["linter"] && config["linter"]["vhdlls"] && config["linter"]["vhdlls"]["xpmPath"] !== undefined) {
+        document.getElementById("linter-vhdlls-xpmPath").value = config["linter"]["vhdlls"]["xpmPath"];
     }
     if (config["linter"] && config["linter"]["ghdl"] && config["linter"]["ghdl"]["arguments"] !== undefined) {
         document.getElementById("linter-ghdl-arguments").value = config["linter"]["ghdl"]["arguments"];
@@ -8045,6 +8105,26 @@ body.vscode-high-contrast {
       mark = MODIFIEDMSG;
     }
     document.getElementById("mark_linter-vhdlls-vunitPath").innerHTML = mark;
+    mark = "";
+    if (projectName !== undefined && config["linter"] && config["linter"]["vhdlls"] && config["linter"]["vhdlls"]["ignoreUnisim"] !== undefined) {
+      mark = MODIFIEDMSG;
+    }
+    document.getElementById("mark_linter-vhdlls-ignoreUnisim").innerHTML = mark;
+    mark = "";
+    if (projectName !== undefined && config["linter"] && config["linter"]["vhdlls"] && config["linter"]["vhdlls"]["unisimPath"] !== undefined) {
+      mark = MODIFIEDMSG;
+    }
+    document.getElementById("mark_linter-vhdlls-unisimPath").innerHTML = mark;
+    mark = "";
+    if (projectName !== undefined && config["linter"] && config["linter"]["vhdlls"] && config["linter"]["vhdlls"]["ignoreXpm"] !== undefined) {
+      mark = MODIFIEDMSG;
+    }
+    document.getElementById("mark_linter-vhdlls-ignoreXpm").innerHTML = mark;
+    mark = "";
+    if (projectName !== undefined && config["linter"] && config["linter"]["vhdlls"] && config["linter"]["vhdlls"]["xpmPath"] !== undefined) {
+      mark = MODIFIEDMSG;
+    }
+    document.getElementById("mark_linter-vhdlls-xpmPath").innerHTML = mark;
     mark = "";
     if (projectName !== undefined && config["linter"] && config["linter"]["ghdl"] && config["linter"]["ghdl"]["arguments"] !== undefined) {
       mark = MODIFIEDMSG;

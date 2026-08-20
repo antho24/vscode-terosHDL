@@ -16,3 +16,23 @@ vunitPath:
   description: "Path to the VUnit files. Example: '/home/myuser/.venvs/default/lib/python3.12/site-packages/vunit/vhdl/**/*.vhd'"
   type: string
   value: ""
+
+ignoreUnisim:
+  description: "Mark the UNISIM library as third-party so diagnostics in the library sources are ignored."
+  type: boolean
+  value: true
+
+unisimPath:
+  description: "Path glob to the Vivado UNISIM VHDL files. Example: '/tools/Xilinx/Vivado/2025.1/data/vhdl/src/unisims/**/*.vhd'"
+  type: string
+  value: ""
+
+ignoreXpm:
+  description: "Mark the XPM library as third-party so diagnostics in the library sources are ignored."
+  type: boolean
+  value: true
+
+xpmPath:
+  description: "Path glob to the Vivado XPM VHDL files. Example: '/tools/Xilinx/Vivado/2025.1/data/ip/xpm/**/*.vhd'"
+  type: string
+  value: ""
