@@ -97,14 +97,23 @@ export class Multi_project_manager {
     // Load / Save in a file
     ////////////////////////////////////////////////////////////////////////////
     public async load(emitterProject: ProjectEmitter, buildBasePath: string): Promise<void> {
-        let failed = false;
+        const failures: string[] = [];
 
         // Initialize
         this.project_manager_list = [];
         this.selected_project = undefined;
 
         try {
-            const file_content = file_utils.read_file_sync(this.sync_file_path);
+            let file_content: string;
+            try {
+                file_content = file_utils.read_file_sync(this.sync_file_path);
+            } catch (error) {
+                if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+                    this.projectEmitter.emitEvent("", e_event.ADD_PROJECT);
+                    return;
+                }
+                throw error;
+            }
             const prj_saved = JSON.parse(file_content);
 
             for (const prj_info of prj_saved.project_list) {
@@ -130,7 +139,7 @@ export class Multi_project_manager {
                         );
                     }
                 } catch (error) {
-                    failed = true;
+                    failures.push(`Project ${prj_info?.name ?? '(unnamed)'}: ${String(error)}`);
                 }
             }
 
@@ -139,19 +148,21 @@ export class Multi_project_manager {
                     this.selected_project = this.get_project_by_name(prj_saved.selected_project);
                 } catch (error) {
                     this.selected_project = undefined;
-                    failed = true;
+                    failures.push(`Selected project: ${String(error)}`);
                 }
             }
         }
 
         catch (error) {
-            failed = true;
+            failures.push(String(error));
         }
 
         this.projectEmitter.emitEvent("", e_event.ADD_PROJECT);
 
-        if (failed) {
-            throw new ProjectOperationError(`There have been errors loading project list from disk.`);
+        if (failures.length > 0) {
+            throw new ProjectOperationError(
+                `There have been errors loading project list from disk (${this.sync_file_path}). ${failures.join('; ')}`
+            );
         }
     }
 

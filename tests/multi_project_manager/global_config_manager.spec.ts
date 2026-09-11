@@ -94,4 +94,32 @@ describe('GlobalConfigManager', () => {
         expect(save_file_sync).toHaveBeenCalled();
     });
 
+    it('keeps defaults when no settings file exists', async () => {
+        const save = setupFileMocks({
+            read_file_sync: jest.fn(() => {
+                throw Object.assign(new Error('No such file'), { code: 'ENOENT' });
+            }),
+        });
+        const GlobalConfigManager = await importGlobalConfigManager();
+        const manager = GlobalConfigManager.newInstance(sync_file_path);
+        expect(() => manager.load()).not.toThrow();
+        expect(manager.get_config()).toEqual(get_default_config());
+        expect(save).not.toHaveBeenCalled();
+    });
+
+    it.each(['EACCES', 'invalid JSON'])('reports %s instead of treating it as a missing file', async (cause) => {
+        setupFileMocks({
+            read_file_sync: jest.fn(() => {
+                if (cause === 'EACCES') {
+                    throw Object.assign(new Error('Permission denied'), { code: cause });
+                }
+                return '{invalid';
+            }),
+        });
+        const GlobalConfigManager = await importGlobalConfigManager();
+        const manager = GlobalConfigManager.newInstance(sync_file_path);
+        expect(() => manager.load()).toThrow();
+        expect(manager.get_config()).toEqual(get_default_config());
+    });
+
 });

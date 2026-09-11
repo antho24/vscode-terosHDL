@@ -591,6 +591,25 @@ describe('MultiProjectManager', () => {
             jest.clearAllMocks();
         });
 
+        test('starts with no projects when the saved list does not exist', async () => {
+            (<jest.Mock>read_file_sync).mockImplementationOnce(() => {
+                throw Object.assign(new Error('No such file'), { code: 'ENOENT' });
+            });
+            await expect(multiProjectManager.load(emitter, "")).resolves.toBeUndefined();
+            expect(multiProjectManager.get_projects()).toEqual([]);
+            expect(save_file_sync).not.toHaveBeenCalled();
+        });
+
+        test('includes the path and cause when reading the saved list fails', async () => {
+            (<jest.Mock>read_file_sync).mockImplementationOnce(() => {
+                throw Object.assign(new Error('Permission denied'), { code: 'EACCES' });
+            });
+            await expect(multiProjectManager.load(emitter, "")).rejects.toThrow(
+                `There have been errors loading project list from disk (${sync_file_path}). Error: Permission denied`
+            );
+            expect(save_file_sync).not.toHaveBeenCalled();
+        });
+
         test('should load correctly when the project list is empty', async () => {
             (<jest.Mock>read_file_sync).mockReturnValue(JSON.stringify({
                 selected_project: "",

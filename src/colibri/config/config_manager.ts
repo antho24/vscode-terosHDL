@@ -102,7 +102,16 @@ export class GlobalConfigManager extends ConfigManager {
      * Loads the configuration from the sync file.
      */
     public load() {
-        const file_content = read_file_sync(this.sync_file_path);
+        let file_content: string;
+        try {
+            file_content = read_file_sync(this.sync_file_path);
+        } catch (error) {
+            // A fresh installation has no saved settings yet.
+            if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+                return;
+            }
+            throw error;
+        }
         const config_saved = JSON.parse(file_content);
         this.set_config(get_config_from_json(config_saved));
     }
@@ -115,4 +124,3 @@ export class GlobalConfigManager extends ConfigManager {
         save_file_sync(this.sync_file_path, config_string);
     }
 }
-

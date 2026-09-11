@@ -134,9 +134,13 @@ export class Teroshdl {
     private async init_multi_project_manager() {
         try {
             GlobalConfigManager.getInstance().load();
+        } catch (error) {
+            debugLogger.warn(`Unable to load global settings; using defaults. ${String(error)}`);
+        }
+        try {
             await this.manager.load(this.emitterProject, getVSCodeWorkspaceStorage(this.context));
         } catch (error) {
-            debugLogger.warn('There have been errors loading project list from disk.');
+            debugLogger.warn(String(error));
         }
     }
 
